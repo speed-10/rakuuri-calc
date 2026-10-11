@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#123b2a">
+<title>ラク売り計算 | 仕入れ前の利益判定</title>
+<style>
+:root{--green:#123b2a;--green2:#216847;--mint:#e8f5ed;--bg:#f4f7f5;--text:#18231d;--muted:#66736b;--line:#dce5df;--red:#b42318;--amber:#875900}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Noto Sans JP",sans-serif;line-height:1.5}
+header{background:var(--green);color:#fff;padding:22px 18px 25px;border-radius:0 0 22px 22px}header .tag{font-size:12px;opacity:.8;letter-spacing:.08em}h1{font-size:26px;margin:4px 0}header p{font-size:13px;margin:4px 0 0;opacity:.9}
+main{max-width:760px;margin:0 auto;padding:14px 13px 36px}.card{background:white;border:1px solid var(--line);border-radius:17px;padding:16px;margin:12px 0;box-shadow:0 3px 12px #163d2610}
+h2{font-size:17px;margin:0 0 13px}.sub{font-size:12px;color:var(--muted);margin-top:-7px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.field{display:flex;flex-direction:column;gap:5px}.field.full{grid-column:1/-1}label{font-size:12px;color:#47564c;font-weight:650}input,select{font:inherit;width:100%;min-width:0;border:1px solid #cdd9d1;border-radius:10px;padding:11px 10px;background:#fff;color:var(--text)}input:focus,select:focus{outline:2px solid #92c7a7;border-color:var(--green2)}.unit{position:relative}.unit input{padding-right:37px}.unit span{position:absolute;right:11px;top:11px;color:var(--muted);font-size:13px}
+button{font:inherit;font-weight:700;border:0;border-radius:11px;padding:12px 14px;cursor:pointer}.primary{background:var(--green);color:white;width:100%;margin-top:14px}.secondary{background:var(--mint);color:var(--green)}.ghost{background:white;color:var(--green);border:1px solid var(--line)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.actions button{flex:1}
+.result{background:#f8fbf9;border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:14px}.status{display:inline-block;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;background:#e5f5e9;color:#17643a}.status.bad{background:#fde9e7;color:var(--red)}.status.warn{background:#fff3d6;color:var(--amber)}.big{font-size:30px;font-weight:850;letter-spacing:-.03em;margin:6px 0}.muted{color:var(--muted);font-size:12px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.stat{background:white;border:1px solid var(--line);padding:10px;border-radius:11px}.stat .k{font-size:11px;color:var(--muted)}.stat .v{font-size:18px;font-weight:800;margin-top:2px;overflow-wrap:anywhere}
+details{border-top:1px solid var(--line);padding-top:10px;margin-top:12px}summary{font-weight:700;font-size:13px;cursor:pointer}.history-item{border:1px solid var(--line);border-radius:12px;padding:12px;margin:9px 0}.history-top{display:flex;justify-content:space-between;gap:8px}.history-item strong{display:block}.history-item .muted{margin-top:3px}.history-item button{padding:7px 9px;font-size:12px}.empty{color:var(--muted);text-align:center;padding:18px 5px;font-size:13px}.foot{font-size:11px;color:var(--muted);padding:0 4px 18px}.notice{background:#fff8e7;border:1px solid #f1dfae;border-radius:12px;padding:11px;font-size:12px;color:#634b13;margin-top:12px}
+@media(min-width:600px){header{padding-left:max(22px,calc((100% - 720px)/2));padding-right:max(22px,calc((100% - 720px)/2))}.card{padding:20px}}
+</style>
+</head>
+<body>
+<header><div class="tag">仕入れ前の利益判定ツール</div><h1>ラク売り計算</h1><p>買う前に、利益が出るかチェック。</p></header>
+<main>
+<section class="card">
+<h2>① 販売条件を入力</h2>
+<p class="sub">売れそうな価格と、かかる費用を入力してください。</p>
+<div class="grid">
+<div class="field full"><label for="name">商品名（任意）</label><input id="name" placeholder="例：ワイヤレスイヤホン"></div>
+<div class="field"><label for="sale">想定販売価格</label><div class="unit"><input id="sale" type="number" min="0" step="1" value="3000" inputmode="decimal"><span>円</span></div></div>
+<div class="field"><label for="buy">仕入れ価格</label><div class="unit"><input id="buy" type="number" min="0" step="1" value="1000" inputmode="decimal"><span>円</span></div></div>
+<div class="field"><label for="fee">販売手数料</label><div class="unit"><input id="fee" type="number" min="0" max="99" step="0.1" value="10" inputmode="decimal"><span>%</span></div></div>
+<div class="field"><label for="ship">送料</label><div class="unit"><input id="ship" type="number" min="0" step="1" value="450" inputmode="decimal"><span>円</span></div></div>
+<div class="field"><label for="pack">梱包費</label><div class="unit"><input id="pack" type="number" min="0" step="1" value="50" inputmode="decimal"><span>円</span></div></div>
+<div class="field"><label for="other">その他費用</label><div class="unit"><input id="other" type="number" min="0" step="1" value="0" inputmode="decimal"><span>円</span></div></div>
+<div class="field"><label for="target">目標利益</label><div class="unit"><input id="target" type="number" min="0" step="1" value="500" inputmode="decimal"><span>円</span></div></div>
+<div class="field"><label for="minmargin">目標利益率</label><div class="unit"><input id="minmargin" type="number" min="0" max="99" step="1" value="20" inputmode="decimal"><span>%</span></div></div>
+</div>
+<button class="primary" id="judge">仕入れ判定する</button>
+<div class="result" id="result" aria-live="polite">
+<span class="status">判定結果</span><div class="big">利益 1,200円</div><div class="muted">入力内容からの概算です。</div>
+</div>
+<div class="stats">
+<div class="stat"><div class="k">目標利益を満たす仕入れ上限</div><div class="v" id="maxbuy">1,500円</div></div>
+<div class="stat"><div class="k">目標利益率を満たす仕入れ上限</div><div class="v" id="marginbuy">1,500円</div></div>
+<div class="stat"><div class="k">損益ゼロの販売価格</div><div class="v" id="breakeven">1,667円</div></div>
+<div class="stat"><div class="k">利益率</div><div class="v" id="margin">40.0%</div></div>
+</div>
+<div class="actions">
+<button class="secondary" id="save">この商品を保存</button>
+<button class="ghost" id="clear">入力をリセット</button>
+</div>
+<div class="notice">判定は入力した販売価格で売れた場合の概算です。売れ残り、値下げ、返品、税金、保管費などは含まれません。購入前に販売先の最新手数料と送料を確認してください。</div>
+</section>
+<section class="card">
+<h2>② 保存した商品</h2>
+<p class="sub">このブラウザのスマホ内に保存されます。端末変更やブラウザデータ削除に備えて、定期的に書き出してください。</p>
+<div class="actions" style="margin-top:0">
+<button class="secondary" id="export">履歴をバックアップ</button>
+<button class="ghost" id="importBtn">バックアップを読み込む</button>
+<input id="importFile" type="file" accept="application/json,.json" hidden>
+</div>
+<div id="history"><div class="empty">まだ保存した商品はありません。</div></div>
+</section>
+<p class="foot">ラク売り計算 v0.2 · 試作品。入力データは外部サーバーに送信しません。ブラウザ内保存を使用します。</p>
+</main>
+<script>
+(function(){
+const $=id=>document.getElementById(id);
+const ids=['name','sale','buy','fee','ship','pack','other','target','minmargin'];
+const yen=n=>Math.round(n).toLocaleString('ja-JP')+'円';
+const num=id=>Math.max(0,Number($(id).value)||0);
+const getData=()=>({name:$('name').value.trim(),sale:num('sale'),buy:num('buy'),fee:Math.min(99,num('fee'))/100,feePercent:Math.min(99,num('fee')),ship:num('ship'),pack:num('pack'),other:num('other'),target:num('target'),minmargin:Math.min(99,num('minmargin')),createdAt:new Date().toISOString()});
+function calc(d){
+ const costs=d.ship+d.pack+d.other;
+ const profit=d.sale*(1-d.fee)-d.buy-costs;
+ const margin=d.sale>0?profit/d.sale*100:0;
+ const maxBuy=d.sale*(1-d.fee)-costs-d.target;
+ const marginBuy=d.sale*(1-d.fee)-costs-d.sale*d.minmargin/100;
+ const breakeven=(1-d.fee)>0?(d.buy+costs)/(1-d.fee):Infinity;
+ const meetsProfit=profit>=d.target;
+ const meetsMargin=margin>=d.minmargin;
+ let status,cls,msg;
+ if(d.sale<=0){status='販売価格を入力';cls='warn';msg='想定販売価格を0円より大きくしてください。'}
+ else if(profit<0){status='赤字の可能性';cls='bad';msg='この条件では赤字です。仕入れ価格を下げるか、売値・送料を見直してください。'}
+ else if(meetsProfit&&meetsMargin){status='仕入れ候補';cls='';msg='目標利益と目標利益率の両方を満たしています。'}
+ else {status='条件を見直そう';cls='warn';msg='利益は出る見込みですが、設定した目標に届いていません。'}
+ return {profit,margin,maxBuy,marginBuy,breakeven,status,cls,msg,meetsProfit,meetsMargin};
+}
+function render(){
+ const d=getData(),c=calc(d);
+ $('result').innerHTML='<span class="status '+c.cls+'">'+c.status+'</span><div class="big" style="color:'+(c.profit<0?'var(--red)':'var(--green)')+'">利益 '+yen(c.profit)+'</div><div>'+c.msg+'</div><div class="muted" style="margin-top:7px">販売手数料の概算：'+yen(d.sale*d.fee)+' · 利益率：'+c.margin.toFixed(1)+'%</div>';
+ $('maxbuy').textContent=yen(Math.max(0,c.maxBuy));
+ $('marginbuy').textContent=yen(Math.max(0,c.marginBuy));
+ $('breakeven').textContent=Number.isFinite(c.breakeven)?yen(c.breakeven):'計算不可';
+ $('margin').textContent=c.margin.toFixed(1)+'%';
+ return {d,c};
+}
+ids.forEach(id=>$(id).addEventListener('input',render));
+$('judge').addEventListener('click',render);
+function loadHistory(){try{return JSON.parse(localStorage.getItem('rakuuri_history_v1')||'[]')}catch(e){return []}}
+function saveHistory(h){localStorage.setItem('rakuuri_history_v1',JSON.stringify(h))}
+function renderHistory(){
+ const h=loadHistory(),root=$('history');
+ if(!h.length){root.innerHTML='<div class="empty">まだ保存した商品はありません。</div>';return}
+ root.innerHTML='';
+ h.slice().reverse().forEach(item=>{
+  const c=calc(item),div=document.createElement('div');div.className='history-item';
+  const top=document.createElement('div');top.className='history-top';
+  const left=document.createElement('div'),strong=document.createElement('strong');strong.textContent=item.name||'名前なしの商品';
+  const meta=document.createElement('div');meta.className='muted';meta.textContent='売値 '+yen(item.sale)+' · 仕入れ '+yen(item.buy)+' · 利益 '+yen(c.profit);
+  left.append(strong,meta);
+  const right=document.createElement('div');right.style.display='flex';right.style.gap='5px';right.style.flexWrap='wrap';
+  const use=document.createElement('button');use.className='secondary';use.textContent='再編集';use.onclick=()=>{ids.forEach(id=>{const map={name:item.name,sale:item.sale,buy:item.buy,fee:item.feePercent,ship:item.ship,pack:item.pack,other:item.other,target:item.target,minmargin:item.minmargin};$(id).value=map[id]??''});render();window.scrollTo({top:0,behavior:'smooth'})};
+  const del=document.createElement('button');del.className='ghost';del.textContent='削除';del.onclick=()=>{if(confirm('この保存データを削除しますか？')){saveHistory(loadHistory().filter(x=>x.id!==item.id));renderHistory()}};
+  right.append(use,del);top.append(left,right);div.append(top);root.append(div);
+ });
+}
+$('save').addEventListener('click',()=>{
+ const {d,c}=render();
+ if(d.sale<=0){alert('想定販売価格を入力してください。');return}
+ const h=loadHistory();h.push({...d,id:String(Date.now())});saveHistory(h);renderHistory();alert('この端末のブラウザに保存しました。');
+});
+$('clear').addEventListener('click',()=>{if(!confirm('入力欄を初期値に戻しますか？'))return;const defaults={name:'',sale:3000,buy:1000,fee:10,ship:450,pack:50,other:0,target:500,minmargin:20};ids.forEach(id=>$(id).value=defaults[id]);render()});
+$('export').addEventListener('click',()=>{
+ const data=JSON.stringify({app:'ラク売り計算',version:1,history:loadHistory()},null,2);
+ const blob=new Blob([data],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='rakuuri-backup.json';a.click();URL.revokeObjectURL(url);
+});
+$('importBtn').addEventListener('click',()=>$('importFile').click());
+$('importFile').addEventListener('change',async e=>{
+ const file=e.target.files[0];if(!file)return;
+ try{const obj=JSON.parse(await file.text());const arr=Array.isArray(obj)?obj:obj.history;if(!Array.isArray(arr))throw new Error('形式が違います');if(!confirm('読み込んだ商品を現在の履歴に追加しますか？'))return;const old=loadHistory();const cleaned=arr.filter(x=>x&&typeof x==='object'&&Number.isFinite(Number(x.sale))&&Number.isFinite(Number(x.buy))).map(x=>({...x,id:String(Date.now())+Math.random().toString(16).slice(2),fee:Number(x.fee)||0,feePercent:Number(x.feePercent??Number(x.fee||0)*100),ship:Number(x.ship)||0,pack:Number(x.pack)||0,other:Number(x.other)||0,target:Number(x.target)||0,minmargin:Number(x.minmargin)||0}));saveHistory(old.concat(cleaned));renderHistory();alert(cleaned.length+'件を読み込みました。')}catch(err){alert('バックアップを読み込めませんでした。ファイルを確認してください。')}finally{e.target.value=''}
+});
+render();renderHistory();
+})();
+</script>
+</body>
+</html>
