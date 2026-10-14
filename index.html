@@ -110,7 +110,7 @@ function render(){
 ids.forEach(id=>$(id).addEventListener('input',render));
 $('judge').addEventListener('click',render);
 function loadHistory(){try{return JSON.parse(localStorage.getItem('rakuuri_history_v1')||'[]')}catch(e){return []}}
-function saveHistory(h){localStorage.setItem('rakuuri_history_v1',JSON.stringify(
+function saveHistory(h){localStorage.setItem('rakuuri_history_v1',JSON.stringify(h))}
 
 function renderHistory(){
 
