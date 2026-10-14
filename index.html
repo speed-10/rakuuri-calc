@@ -15,7 +15,9 @@ h2{font-size:17px;margin:0 0 13px}.sub{font-size:12px;color:var(--muted);margin-
 button{font:inherit;font-weight:700;border:0;border-radius:11px;padding:12px 14px;cursor:pointer}.primary{background:var(--green);color:white;width:100%;margin-top:14px}.secondary{background:var(--mint);color:var(--green)}.ghost{background:white;color:var(--green);border:1px solid var(--line)}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.actions button{flex:1}
 .result{background:#f8fbf9;border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:14px}.status{display:inline-block;border-radius:999px;padding:5px 10px;font-size:12px;font-weight:800;background:#e5f5e9;color:#17643a}.status.bad{background:#fde9e7;color:var(--red)}.status.warn{background:#fff3d6;color:var(--amber)}.big{font-size:30px;font-weight:850;letter-spacing:-.03em;margin:6px 0}.muted{color:var(--muted);font-size:12px}.stats{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.stat{background:white;border:1px solid var(--line);padding:10px;border-radius:11px}.stat .k{font-size:11px;color:var(--muted)}.stat .v{font-size:18px;font-weight:800;margin-top:2px;overflow-wrap:anywhere}
 details{border-top:1px solid var(--line);padding-top:10px;margin-top:12px}summary{font-weight:700;font-size:13px;cursor:pointer}.history-item{border:1px solid var(--line);border-radius:12px;padding:12px;margin:9px 0}.history-top{display:flex;justify-content:space-between;gap:8px}.history-item strong{display:block}.history-item .muted{margin-top:3px}.history-item button{padding:7px 9px;font-size:12px}.empty{color:var(--muted);text-align:center;padding:18px 5px;font-size:13px}.foot{font-size:11px;color:var(--muted);padding:0 4px 18px}.notice{background:#fff8e7;border:1px solid #f1dfae;border-radius:12px;padding:11px;font-size:12px;color:#634b13;margin-top:12px}
-@media(min-width:600px){header{padding-left:max(22px,calc((100% - 720px)/2));padding-right:max(22px,calc((100% - 720px)/2))}.card{padding:20px}}
+@media(min-width:600px){header{padding-left:max(22px,calc((100% - 720px)/2));padding-right:max(22px,calc((100% - 720px)/2))}.history-item.best{border:2px solid #198754;background:#f0faf3}
+
+.best-label{display:inline-block;background:#d8f3e2;color:#146c43;border-radius:999px;padding:3px 8px;font-size:11px;font-weight:800;margin-bottom:5px}.card{padding:20px}}
 </style>
 </head>
 <body>
@@ -108,22 +110,54 @@ function render(){
 ids.forEach(id=>$(id).addEventListener('input',render));
 $('judge').addEventListener('click',render);
 function loadHistory(){try{return JSON.parse(localStorage.getItem('rakuuri_history_v1')||'[]')}catch(e){return []}}
-function saveHistory(h){localStorage.setItem('rakuuri_history_v1',JSON.stringify(h))}
+function saveHistory(h){localStorage.setItem('rakuuri_history_v1',JSON.stringify(
+
 function renderHistory(){
- const h=loadHistory(),root=$('history');
+
+ const h=loadHistory().slice().sort((a,b)=>calc(b).profit-calc(a).profit);
+
+ const root=$('history');
+
  if(!h.length){root.innerHTML='<div class="empty">まだ保存した商品はありません。</div>';return}
+
  root.innerHTML='';
- h.slice().reverse().forEach(item=>{
-  const c=calc(item),div=document.createElement('div');div.className='history-item';
+
+ const summary=document.createElement('div');summary.className='result';
+
+ const title=document.createElement('strong');title.textContent='🏆 一番利益が高い商品';
+
+ const name=document.createElement('div');name.className='big';name.textContent=h[0].name||'名前なしの商品';
+
+ const amount=document.createElement('div');amount.className='muted';amount.textContent='利益 '+yen(calc(h[0]).profit);
+
+ summary.append(title,name,amount);root.append(summary);
+
+ h.forEach((item,index)=>{
+
+  const c=calc(item),div=document.createElement('div');div.className='history-item'+(index===0?' best':'');
+
   const top=document.createElement('div');top.className='history-top';
-  const left=document.createElement('div'),strong=document.createElement('strong');strong.textContent=item.name||'名前なしの商品';
+
+  const left=document.createElement('div');
+
+  if(index===0){const badge=document.createElement('div');badge.className='best-label';badge.textContent='🏆 利益1位';left.append(badge)}
+
+  const strong=document.createElement('strong');strong.textContent=(index+1)+'位：'+(item.name||'名前なしの商品');
+
   const meta=document.createElement('div');meta.className='muted';meta.textContent='売値 '+yen(item.sale)+' · 仕入れ '+yen(item.buy)+' · 利益 '+yen(c.profit);
+
   left.append(strong,meta);
+
   const right=document.createElement('div');right.style.display='flex';right.style.gap='5px';right.style.flexWrap='wrap';
+
   const use=document.createElement('button');use.className='secondary';use.textContent='再編集';use.onclick=()=>{ids.forEach(id=>{const map={name:item.name,sale:item.sale,buy:item.buy,fee:item.feePercent,ship:item.ship,pack:item.pack,other:item.other,target:item.target,minmargin:item.minmargin};$(id).value=map[id]??''});render();window.scrollTo({top:0,behavior:'smooth'})};
+
   const del=document.createElement('button');del.className='ghost';del.textContent='削除';del.onclick=()=>{if(confirm('この保存データを削除しますか？')){saveHistory(loadHistory().filter(x=>x.id!==item.id));renderHistory()}};
+
   right.append(use,del);top.append(left,right);div.append(top);root.append(div);
+
  });
+
 }
 $('save').addEventListener('click',()=>{
  const {d,c}=render();
