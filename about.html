@@ -1,30 +1,28 @@
 
 
-<!doctype html>
+<!DOCTYPE html>
 
 <html lang="ja">
 
 <head>
 
-<meta charset="utf-8">
+<meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
-<meta name="description" content="ラク売り計算の使い方。販売価格、仕入れ価格、手数料、送料などから利益を確認する方法を解説します。">
+<meta name="description" content="ラク売り計算の目的、機能、利益計算の考え方と利用時の注意点を説明します。">
 
-<title>ラク売り計算の使い方</title>
+<title>ラク売り計算について</title>
 
 <style>
 
-body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;line-height:1.9;max-width:760px;margin:auto;padding:22px;color:#222}
+body{font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",Meiryo,sans-serif;line-height:1.9;color:#222;max-width:760px;margin:auto;padding:20px;background:#f7f8fa}
 
-h1,h2{color:#174b35}
+main{background:white;padding:24px;border-radius:12px}
 
-h2{margin-top:28px;border-bottom:1px solid #ddd;padding-bottom:6px}
+h1{font-size:1.7em}h2{font-size:1.2em;margin-top:28px;border-bottom:1px solid #ddd;padding-bottom:6px}
 
-.box{background:#f3f7f4;padding:14px;border-radius:8px}
-
-a{color:#1769aa}
+a{color:#075fc7}li{margin:8px 0}.note{background:#fff5df;padding:12px;border-radius:8px}
 
 </style>
 
@@ -32,71 +30,73 @@ a{color:#1769aa}
 
 <body>
 
-<h1>ラク売り計算の使い方</h1>
+<main>
 
-<p>ラク売り計算は、商品の販売価格や仕入れ価格、手数料、送料などを入力して、どのくらい利益が残るかを確認するための無料計算ツールです。</p>
+<h1>ラク売り計算について</h1>
 
-<h2>1. 数字を入力する</h2>
+<p>ラク売り計算は、商品を仕入れる前に、販売価格や仕入れ価格、手数料、送料などから利益の目安を確認するための無料計算ツールです。</p>
 
-<ul>
-
-<li><strong>商品名：</strong>商品を区別するための名前</li>
-
-<li><strong>販売価格：</strong>売る予定の価格</li>
-
-<li><strong>仕入れ価格：</strong>商品の仕入れにかかる金額</li>
-
-<li><strong>販売手数料：</strong>販売サービスなどに支払う手数料</li>
-
-<li><strong>送料・梱包費・その他費用：</strong>販売にかかる経費</li>
-
-<li><strong>目標利益・目標利益率：</strong>確保したい利益の基準</li>
-
-</ul>
-
-<p>入力欄の名称や単位を確認して、実際の販売条件に合わせて入力してください。</p>
-
-<h2>2. 計算結果を確認する</h2>
+<h2>このツールでできること</h2>
 
 <ul>
 
-<li><strong>利益：</strong>入力した費用を差し引いた利益の目安</li>
+<li>販売予定価格と仕入れ価格から利益の目安を計算</li>
 
-<li><strong>利益率：</strong>販売価格に対して利益が占める割合</li>
+<li>販売手数料、送料、梱包費、その他の経費を考慮</li>
 
-<li><strong>仕入れ上限：</strong>目標利益を確保するための仕入れ価格の目安</li>
+<li>目標利益を設定して、仕入れ価格の判断をサポート</li>
 
-<li><strong>損益分岐点：</strong>利益がゼロになる販売価格の目安</li>
+<li>商品情報を保存し、仕入れ候補を比較するための情報を管理</li>
 
 </ul>
 
-<h2>3. 計算例</h2>
+<h2>利益計算の考え方</h2>
 
-<div class="box">
+<p>基本的な計算は、販売予定価格から仕入れ価格、販売手数料、送料、梱包費、その他の経費を差し引く方法です。</p>
 
-<p>販売価格3,000円、仕入れ価格1,000円、販売手数料10％、送料450円、梱包費50円の場合。</p>
+<p><strong>利益の目安 ＝ 販売予定価格 − 仕入れ価格 − 販売手数料 − 送料 − 梱包費 − その他の経費</strong></p>
 
-<p>販売手数料は300円です。</p>
+<p>例えば、販売価格3,000円、仕入れ価格1,000円、手数料300円、送料450円、梱包費50円の場合、利益の目安は1,200円です。利益率は販売価格に対して40％となります。</p>
 
-<p>利益の目安：3,000円 − 1,000円 − 300円 − 450円 − 50円 ＝ <strong>1,200円</strong></p>
+<h2>入力項目について</h2>
 
-<p>利益率：1,200円 ÷ 3,000円 × 100 ＝ <strong>40％</strong></p>
+<ul>
 
-<p>※この例では、その他の費用や税金を含めていません。</p>
+<li><strong>商品名：</strong>仕入れ候補の商品を区別するために入力します。</li>
 
-</div>
+<li><strong>販売予定価格：</strong>実際に販売できそうな価格を入力します。</li>
 
-<h2>4. 商品の保存と比較</h2>
+<li><strong>仕入れ価格：</strong>商品を購入するために必要な金額を入力します。</li>
 
-<p>商品保存機能を使うと、商品の計算結果を保存して後から確認できます。バックアップ機能を利用する場合は、保存したファイルを安全な場所に保管してください。</p>
+<li><strong>販売手数料：</strong>利用する販売サービスの手数料率を入力します。</li>
 
-<h2>5. 利用時の注意</h2>
+<li><strong>送料・梱包費：</strong>発送にかかる費用を入力します。</li>
 
-<p>計算結果は入力した数字に基づく目安です。実際の利益は、手数料の計算方法、送料、返品、値引き、税金、その他の経費によって変わります。販売サービスの最新の料金も確認してください。</p>
+<li><strong>その他の経費：</strong>必要に応じて追加費用を入力します。</li>
 
-<p><a href="./index.html">← ラク売り計算に戻る</a></p>
+<li><strong>目標利益：</strong>仕入れの判断に使いたい利益額を設定します。</li>
 
-<p><a href="./about.html">サイトについて</a> ｜ <a href="./privacy.html">プライバシーポリシー</a></p>
+</ul>
+
+<h2>利用時の注意点</h2>
+
+<p>計算結果は入力内容に基づく目安です。実際の利益は、販売価格の変動、値下げ、返品、在庫が売れ残るリスク、税金などによって変わります。仕入れの前に、必要な費用をできるだけ正確に入力してください。</p>
+
+<h2>データの保存について</h2>
+
+<p>商品情報は、利用している端末のブラウザ内に保存されます。ブラウザのデータ削除や端末の変更などにより、保存内容が失われる場合があります。必要に応じてバックアップ機能をご利用ください。</p>
+
+<h2>運営方針</h2>
+
+<p>ラク売り計算は、仕入れ判断を簡単にすることを目的としたツールです。計算結果による利益や販売成果を保証するものではありません。</p>
+
+<p><a href="index.html">ラク売り計算に戻る</a></p>
+
+<p><a href="guide.html">使い方と計算例を見る</a></p>
+
+<p><a href="privacy.html">プライバシーポリシー</a></p>
+
+</main>
 
 </body>
 
